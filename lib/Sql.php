@@ -5,7 +5,7 @@ class Sql
     protected  $select;
     protected  $from;
     protected  $where;
-    protected  $insert;
+    protected  $inserts;
     protected  $delete;
     protected  $update;
     protected  $values;
@@ -28,7 +28,7 @@ class Sql
 
     public function inserter($table , $data)
     {
-        $this->insertVal = " INSERT INTO " .  $table . " (" . $data . " )";
+        $this->inserts = " INSERT INTO " .  $table . " (" . $data . " )";
         return $this;
     }
 
@@ -40,8 +40,15 @@ class Sql
 
     public function update($table)
     {
+        if(isset($table))
+        {
         $this->update = "UPDATE " . $table;
         return $this;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public function setkey($set)
@@ -117,6 +124,15 @@ class Sql
                 return $this->select.$this->from.$this->join.$this->group.$this->having.$this->order .$this->limits;
             case !empty($this->distinct):
                 return $this->distinct.$this->from;
+
+            case !empty($this->update):
+                return $this->update.$this->setkey.$this->where;
+
+            case !empty($this->delete):
+                return $this->delete.$this->from.$this->where;
+
+            case !empty($this->inserts):
+                    return $this->inserts.$this->values;
         }
     }
 
